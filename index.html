@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Coding Quiz</title>
-
+    <audio id="correctSound" src="./assets/sfx/correct.wav"></audio>
+    <audio id="incorrectSound" src="./assets/sfx/incorrect.wav"></audio>
     <link rel="stylesheet" href="./assets/css/styles.css" />
   </head>
 
   <body>
     <div class="scores" id="highscores"><a href="highscores.html">View Highscores</a></div>
-    <div class="scores hide" id="quizScore">Current Score: <span id="score">0</span></div>
-    <div class="timer">Time: <span id="time">0</span></div>
+    <div class="scores hide" id="quizScore">Score: <span id="score">0</span></div>
+    <div class="message" id="message"></div>
+    <div class="timer" id="timer">Time: <span id="time">0</span></div>
 
     <div class="wrapper">
       <div id="start-screen" class="start">
@@ -43,6 +45,6 @@
     </div>
 
     <script src="./assets/js/questions.js"></script>
-    <script src="./assets/js/logic.js"></script>
+    <script type="module" src="./assets/js/logic.js"></script>
   </body>
 </html>

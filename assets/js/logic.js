@@ -2,21 +2,25 @@ var timeRemaining = 0;
 var currentQuestion = 0;
 var score = 0;
 
+var messageEl = document.getElementById("message");
 var scoreEl = document.getElementById("quizScore");
 var welcomeContainerEl = document.getElementById("start-screen");
 var highScoresEl = document.getElementById("highscores");
 var quizScoreEl = document.getElementById("quizScore");
+
+var correctSound = document.getElementById("correctSound")
+var incorrectSound = document.getElementById("incorrectSound")
 
 // Add event listener to start button
 document.getElementById("start").addEventListener("click", startQuiz);
 
 // Function to start the timer for the quiz
 function startQuiz() {
-    console.log("Hello World");
     startTimer();
-    hideWelcome();
-    showScores();
-    //showQuestions();
+    welcomeContainerEl.classList.add('hide');
+    highScoresEl.classList.add('hide');
+    quizScoreEl.classList.remove('hide');
+    showQuestions();
 }
 
 // Timer Function
@@ -27,7 +31,7 @@ function startTimer() {
         timeRemaining--;
         document.getElementById("time").textContent = timeRemaining + " seconds left";
         // When the time runs out the game is over and a function will be called to end the game
-        if (timeRemaining === 0) {
+        if (timeRemaining === 0 || timeRemaining < 0) {
             clearInterval(timeInterval);
             //gameOver()
             console.log("Game Over!");
@@ -35,12 +39,66 @@ function startTimer() {
     }, 1000);
 }
 
-function hideWelcome() {
-    welcomeContainerEl.setAttribute("class", "hide");
-}
+// Function to call the questions and produce the next question when it has been answered
+function showQuestions() {
+    //Getting elements so the questions can be displayed correctly
+    var questionContainerEl = document.getElementById("questions");
+    questionContainerEl.classList.remove('hide');
 
-function showScores() {
-    highScoresEl.setAttribute("class", "scores hide");
-    quizScoreEl.setAttribute("class", "scores");
-}
+    var questionHeader = document.getElementById("question-title");
+    questionHeader.textContent = "Question " + questionList[currentQuestion].id;
 
+    var choicesEl = document.getElementById("choices");
+    choicesEl.textContent = "";
+
+    var questionEl = document.createElement("p");
+    questionEl.textContent = questionList[currentQuestion].question;
+    questionEl.setAttribute("data-index", questionList[currentQuestion].correctAnswerIndex);
+    choicesEl.appendChild(questionEl);
+
+    var divEl = document.createElement("div");
+    questionEl.appendChild(divEl);
+
+    for (var i = 0; i < questionList[currentQuestion].answers.length; i++) {
+        var answerButton = document.createElement("button");
+        answerButton.textContent = questionList[currentQuestion].answers[i];
+        answerButton.setAttribute("data-index", [i]); 
+        questionEl.appendChild(answerButton)
+    }
+
+    // Added an event listener to compare the clicked button with the answer index
+    questionEl.addEventListener("click", function (event) {
+        var usersAnswer = event.target;
+
+        if (usersAnswer.matches("button")) {
+            var correctAnswerIndex = questionEl.getAttribute("data-index");
+            var selectedAnswerIndex = usersAnswer.getAttribute("data-index");
+
+            if (correctAnswerIndex === selectedAnswerIndex) {
+                score++;
+                correctSound.play();
+                scoreEl.textContent = "Score: " + score;
+                messageEl.textContent = "CORRECT! ✅";
+                currentQuestion++;
+                nextQuestion();
+            } else {
+                timeRemaining = timeRemaining - 10;
+                incorrectSound.play();
+                scoreEl.textContent = "Score: " + score;
+                messageEl.textContent = "WRONG! ❌";
+                currentQuestion++
+                nextQuestion();
+            }
+        }
+    });
+}
+// When the question is answered, the next question is rendered. When the last question is answered the endGame() function is called
+function nextQuestion() {
+    if (currentQuestion < questionList.length) {
+        var questionContainerEl = document.getElementById("questions");
+        questionContainerEl.classList.add('hide');
+        showQuestions();
+    } else {
+        //endGame();
+    }
+}

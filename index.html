@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Coding Quiz</title>
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.png" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
     <audio id="correctSound" src="./assets/sfx/correct.wav"></audio>
     <audio id="incorrectSound" src="./assets/sfx/incorrect.wav"></audio>
-    <link rel="stylesheet" href="./assets/css/styles.css" />
   </head>
 
   <body>
@@ -34,7 +35,7 @@
 
       <div id="end-screen" class="hide">
         <h2>All done!</h2>
-        <p>Your final score is <span id="final-score"></span>.</p>
+        <p>Your final score is <span id="final-score"></span>. <span id="final-message"></span></p>
         <p>
           Enter initials: <input type="text" id="initials" max="3" />
           <button id="submit">Submit</button>

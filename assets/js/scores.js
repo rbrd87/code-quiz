@@ -1,50 +1,49 @@
-//high scores stored as an array in local storage. Function here declared to retrieve them
-function getHighScores() {
+// The high scores are stored in local storage - this function will retrieve them and store them in a variable.
+export function getHighScores() {
     var highScoresString = localStorage.getItem("highscores");
 
     if (highScoresString === null) {
         return [];
     }
-
+    
     var highScores = JSON.parse(highScoresString);
 
     return highScores;
 }
 
 function showHighScores() {
-    //elements created/amended/appended for the high score page
-    var hSCcontainerEl = document.createElement("section");
-    hSCcontainerEl.setAttribute("class", "wrapper")
-    document.body.appendChild(hSCcontainerEl);
+    // Elements created to show the high scores
+    var scoreContainerEl = document.createElement("section");
+    scoreContainerEl.setAttribute("class", "wrapper")
+    document.body.appendChild(scoreContainerEl);
 
-    var hSHeaderEl = document.createElement("h1");
-    hSHeaderEl.textContent = "High Scores";
-    hSCcontainerEl.appendChild(hSHeaderEl);
+    var scoreHeaderEl = document.createElement("h1");
+    scoreHeaderEl.textContent = "High Scores";
+    scoreContainerEl.appendChild(scoreHeaderEl);
 
     var scoreListEl = document.createElement("ol");
-    hSCcontainerEl.appendChild(scoreListEl);
+    scoreContainerEl.appendChild(scoreListEl);
 
     var backToStartEl = document.createElement("button");
     backToStartEl.setAttribute("id", "backToStart")
     backToStartEl.textContent = "Back to Start";
-    hSCcontainerEl.appendChild(backToStartEl);
+    scoreContainerEl.appendChild(backToStartEl);
 
     var clearScoresEl = document.createElement("button");
     clearScoresEl.textContent = "Clear Highscores";
-    hSCcontainerEl.appendChild(clearScoresEl);
+    scoreContainerEl.appendChild(clearScoresEl);
 
-    //function declared and event listener added to button to refresh page in order to start game again
+    // Function to take the user back to the main screen when clicking the back to start button
     function backToStart() {
         window.location='./index.html';
     }
 
     backToStartEl.addEventListener("click", backToStart);
 
-    //function declared and event listener added to button in order to clear high scores
+    // Function to clear the scores from local storage and reload the page
     function clearScores(event) {
         event.preventDefault();
         localStorage.clear();
-        highScores = 0;
         location.reload();
     }
 
@@ -52,18 +51,19 @@ function showHighScores() {
 
     var highScores = getHighScores();
 
-    //high scores retrieved from local storage and displayed in a list item
+    // After the high scores are retrieved, they are put into a list
     for (let i = 0; i < highScores.length; i++) {
-        const scoreListItem = document.createElement("li");
+        var scoreListItem = document.createElement("li");
         scoreListItem.style.fontWeight = "normal";
 
         scoreListItem.textContent =
             "Name: " + highScores[i].name + " // Score: " + highScores[i].score;
 
-        scoreListEl.appendChild(scoreListItem);
+        scoreListEl.appendChild(scoreListItem)
     }
 }
 
+// Loads the highscore view on page load
 window.onload = function pageLoad() {
     getHighScores()
     showHighScores()

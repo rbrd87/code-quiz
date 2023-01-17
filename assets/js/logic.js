@@ -1,13 +1,22 @@
+// Variables to store the timeRemaining, the currentQuestion and the score
 var timeRemaining = 0;
 var currentQuestion = 0;
 var score = 0;
 
+// Variable to store elements in the HTMl
 var messageEl = document.getElementById("message");
+var timerEl = document.getElementById("timer")
 var scoreEl = document.getElementById("quizScore");
 var welcomeContainerEl = document.getElementById("start-screen");
 var highScoresEl = document.getElementById("highscores");
 var quizScoreEl = document.getElementById("quizScore");
+var resultsContainerEL = document.getElementById("end-screen");
+var questionContainerEl = document.getElementById("questions");
+var hSCcontainerEl = document.createElement("section");
+var scoreListEl = document.createElement("ol");
+var highScoreHeaderEl = document.createElement("h1");
 
+// Variable to play sounds if a question is right/wrong
 var correctSound = document.getElementById("correctSound")
 var incorrectSound = document.getElementById("incorrectSound")
 
@@ -62,7 +71,7 @@ function showQuestions() {
     for (var i = 0; i < questionList[currentQuestion].answers.length; i++) {
         var answerButton = document.createElement("button");
         answerButton.textContent = questionList[currentQuestion].answers[i];
-        answerButton.setAttribute("data-index", [i]); 
+        answerButton.setAttribute("data-index", [i]);
         questionEl.appendChild(answerButton)
     }
 
@@ -92,6 +101,7 @@ function showQuestions() {
         }
     });
 }
+
 // When the question is answered, the next question is rendered. When the last question is answered the endGame() function is called
 function nextQuestion() {
     if (currentQuestion < questionList.length) {
@@ -99,6 +109,102 @@ function nextQuestion() {
         questionContainerEl.classList.add('hide');
         showQuestions();
     } else {
-        //endGame();
+        endGame();
     }
+}
+
+//high scores stored as an array in local storage. Function here declared to retrieve them
+function getHighScores() {
+    var highScoresString = localStorage.getItem("highscores");
+
+    if (highScoresString === null) {
+        return [];
+    }
+
+    var highScores = JSON.parse(highScoresString);
+
+    return highScores;
+}
+
+function showHighScores() {
+    //elements created/amended/appended for the high score page
+    hSCcontainerEl.setAttribute("class", "wrapper")
+    document.body.appendChild(hSCcontainerEl);
+
+    highScoreHeaderEl.textContent = "High Scores";
+    hSCcontainerEl.appendChild(highScoreHeaderEl);
+
+    hSCcontainerEl.appendChild(scoreListEl);
+
+    restartGameButton()
+    viewHighScoresButton()
+
+    var highScores = getHighScores();
+
+    //high scores retrieved from local storage and displayed in a list item
+    for (let i = 0; i < highScores.length; i++) {
+        const scoreListItem = document.createElement("li");
+        scoreListItem.style.fontWeight = "normal";
+
+        scoreListItem.textContent =
+            "Name: " + highScores[i].name + " // Score: " + highScores[i].score;
+
+        scoreListEl.appendChild(scoreListItem);
+    }
+    return;
+}
+
+function restartGameButton() {
+    var restartButtonEl = document.createElement("button");
+    restartButtonEl.textContent = "Start Again";
+    hSCcontainerEl.appendChild(restartButtonEl);
+
+    //function declared and event listener added to button to refresh page in order to start game again
+    function restartGame(event) {
+        event.preventDefault();
+        location.reload();
+    }
+
+    restartButtonEl.addEventListener("click", restartGame);
+}
+
+function viewHighScoresButton() {
+    var viewHighScoresEl = document.createElement("button");
+    viewHighScoresEl.textContent = "View Highscore List";
+    hSCcontainerEl.appendChild(viewHighScoresEl);
+
+    //function declared and event listener added to button to refresh page in order to start game again
+    function highScoresPage() {
+        window.location = './highscores.html';
+    }
+
+    viewHighScoresEl.addEventListener("click", highScoresPage);
+}
+
+function endGame() {
+    //elements removed in order to make way for score screen
+    questionContainerEl.classList.add('hide');
+    resultsContainerEL.classList.remove('hide');
+    timerEl.classList.add('hide');
+    messageEl.classList.add('hide');
+
+    var userInputEl = document.getElementById("initials");
+    var submitEl = document.getElementById("submit");
+
+    // when clicked, the user's initials and score are pushed to the high score array and stored in local storage
+    submitEl.addEventListener("click", function (event) {
+        const newHighScore = {
+            name: userInputEl.value,
+            score: score,
+        };
+
+        let highScores = getHighScores();
+        highScores.push(newHighScore);
+
+        localStorage.setItem("highscores", JSON.stringify(highScores));
+
+        resultsContainerEL.classList.add('hide');
+
+        showHighScores();
+    });
 }
